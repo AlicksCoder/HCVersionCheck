@@ -25,7 +25,12 @@
 //    [HCVersionCheck checkWithDays:2];
     
     
-        [HCVersionCheck checkWithOpenTimes:1 allowIgnore:YES];
+    
+    [HCVersionCheck checkWithOpenTimes:1 allowIgnore:YES];
+    
+    // 开启强制更新
+//    [HCVersionCheck ForceUpdate:NO];
+    
 
 }
 

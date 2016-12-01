@@ -23,6 +23,9 @@
 +(void)checkWithDays:(int)days allowIgnore:(BOOL)ignore;
 
 
+/** 是否开启强制更新，如果不更新，这无法使用程序。 程序默认不开启。 也可以根据接口返回接口选择是否开启 */
++(void)ForceUpdate:(BOOL)force;
+
 @end
 
 

@@ -11,6 +11,7 @@
 
 @interface HCVersionCheck ()
 @property (nonatomic, assign) BOOL isIgnore;
+@property (nonatomic, assign) BOOL isForce;
 
 @end
 
@@ -65,6 +66,13 @@
 }
 
 
++(void)ForceUpdate:(BOOL)force{
+    HCVersionCheck *vc = [HCVersionCheck manager];
+    vc.isForce = force;
+}
+
+
+
 -(void)checkVersion{
     
     
@@ -75,10 +83,11 @@
         
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"发现新版本" message:dict[@"releaseNotes"] preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:@"下次再说" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            
+            if ([HCVersionCheck manager].isForce)   exit(0);
+        
         }]];
         
-        if ([HCVersionCheck manager].isIgnore) {
+        if ([HCVersionCheck manager].isIgnore && ![HCVersionCheck manager].isForce) {
             [alert addAction:[UIAlertAction actionWithTitle:@"忽略该版本" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 HCVersionInfo *info = [HCVersionInfo versionInfo];
                 info.ignoreVersion = [dict[@"version"] floatValue];
@@ -89,7 +98,9 @@
         [alert addAction:[UIAlertAction actionWithTitle:@"立即更新" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:dict[@"trackViewUrl"]] options:@{} completionHandler:nil];
-            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                if ([HCVersionCheck manager].isForce)   exit(0);
+            });
         }]];
         
         [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alert animated:YES completion:nil];
